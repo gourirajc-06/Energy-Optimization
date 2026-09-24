@@ -1,0 +1,894 @@
+/* ==========================================================================
+   AI Energy Optimization - Desktop Window-Fitting Academic Stylesheet
+   Pixel-perfect alignment, balanced two-column layout, zero page overflow
+   ========================================================================== */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    min-height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    background-color: #f8fafc;
+    color: #1e293b;
+    line-height: 1.45;
+    padding: 1.25rem 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+/* Outer Window Frame */
+.window-container {
+    width: min(1400px, 94vw);
+    margin: 0 auto;
+}
+
+/* ==========================================================================
+   TOP BAR: Unified Header
+   ========================================================================== */
+.app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e2e8f0;
+    flex-shrink: 0;
+}
+
+.header-brand {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+}
+
+.header-brand h1 {
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: #0f172a;
+    letter-spacing: -0.01em;
+}
+
+.header-divider {
+    color: #cbd5e1;
+    font-size: 1.1rem;
+}
+
+.subtitle {
+    font-size: 0.9rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.header-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #2563eb;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+    letter-spacing: 0.02em;
+}
+
+/* ==========================================================================
+   MAIN LAYOUT (Split Screen)
+   ========================================================================== */
+.main-layout {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* ==========================================================================
+   LEFT COLUMN: Environment Input
+   ========================================================================== */
+.left-column {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.input-card {
+    padding: 1.5rem;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.65rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.card-header h2 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.panel-subtitle {
+    font-size: 0.72rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+}
+
+#ai-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
+}
+
+.form-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.input-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.input-field label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #475569;
+}
+
+.input-field input[type="number"] {
+    width: 100%;
+    padding: 0.5rem 0.65rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.92rem;
+    outline: none;
+    background: #ffffff;
+    color: #0f172a;
+    transition: border-color 0.15s ease;
+}
+
+.input-field input[type="number"]:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+.toggle-switch {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+gap: 1.5rem;
+}
+
+.toggle-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.45rem;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #475569;
+    transition: all 0.15s ease;
+}
+
+.toggle-option:hover {
+    background: #e2e8f0;
+}
+
+.toggle-option input {
+    cursor: pointer;
+}
+
+.toggle-option input:checked + span {
+    font-weight: 700;
+    color: #2563eb;
+}
+
+.btn-run {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.7rem 1rem;
+    background-color: #2563eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.btn-run:hover {
+    background-color: #1d4ed8;
+}
+
+/* ==========================================================================
+   RIGHT COLUMN: AI Reasoning Flow
+   ========================================================================== */
+.right-column {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: visible;
+    padding: 0;
+}
+
+/* Custom minimal scrollbar */
+.right-column::-webkit-scrollbar {
+    width: 6px;
+}
+.right-column::-webkit-scrollbar-track {
+    background: transparent;
+}
+.right-column::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.reasoning-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.reasoning-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.reasoning-header h2 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.flow-indicator {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.flow-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.flow-card {
+    padding: 1.25rem 1.5rem;
+    border-radius: 10px;
+    gap: 0.75rem;
+}
+
+.card-top {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.card-stage {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #475569;
+    background: #f1f5f9;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+}
+
+.flow-card h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
+    letter-spacing: 0.03em;
+}
+
+.flow-body {
+    font-size: 0.95rem;
+    color: #334155;
+    line-height: 1.6;
+}
+
+.flow-arrow {
+    text-align: center;
+    font-size: 1rem;
+    color: #94a3b8;
+    font-weight: bold;
+    user-select: none;
+    line-height: 1;
+}
+
+/* Perception Details */
+.state-pill-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.35rem;
+}
+
+.state-pill {
+    background: #f1f5f9;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #1e293b;
+    border: 1px solid #e2e8f0;
+}
+
+.observations-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.observations-list li {
+    font-size: 0.82rem;
+    color: #475569;
+    position: relative;
+    padding-left: 0.95rem;
+}
+
+.observations-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0.2rem;
+    color: #3b82f6;
+    font-weight: bold;
+}
+
+/* Rule Details */
+.rule-box {
+    background: #f8fafc;
+    border-left: 3px solid #3b82f6;
+    padding: 0.45rem 0.7rem;
+    font-size: 0.82rem;
+    font-family: Consolas, Monaco, monospace;
+    color: #1e293b;
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 0.3rem;
+}
+
+/* Constraint Details */
+.constraint-item {
+    padding: 0.4rem 0.65rem;
+    border-radius: 4px;
+    font-size: 0.82rem;
+    margin-bottom: 0.3rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+}
+
+.constraint-rejected {
+    background: #fef2f2;
+    border-left: 3px solid #ef4444;
+    color: #991b1b;
+}
+
+.constraint-allowed {
+    background: #f0fdf4;
+    border-left: 3px solid #10b981;
+    color: #065f46;
+}
+
+.constraint-na {
+    background: #f8fafc;
+    border-left: 3px solid #cbd5e1;
+    color: #64748b;
+}
+
+/* Decision Details */
+.card-decision {
+    background: #f0fdf4;
+    border-color: #86efac;
+}
+
+.stage-decision {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.decision-action {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #166534;
+    margin-bottom: 0.35rem;
+}
+
+.decision-reason {
+    font-size: 0.82rem;
+    color: #1e3a8a;
+    background: #ffffff;
+    border: 1px solid #bbf7d0;
+    border-radius: 6px;
+    padding: 0.55rem 0.75rem;
+    line-height: 1.5;
+}
+
+.placeholder-text {
+    color: #94a3b8;
+    font-style: italic;
+    font-size: 0.82rem;
+}
+/* ============================================================
+   GRAPHICAL CSP SEARCH TREE
+   ============================================================ */
+
+.csp-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.csp-info {
+    background: #f8fafc;
+    border: 1px solid #dbe3ed;
+    border-radius: 6px;
+    padding: 0.55rem 0.7rem;
+    font-size: 0.78rem;
+    color: #334155;
+}
+
+
+/* ------------------------------------------------------------
+   TREE AREA
+   ------------------------------------------------------------ */
+
+.graphical-tree-section {
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.tree-title {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+
+/* ------------------------------------------------------------
+   TREE CONTAINER
+   ------------------------------------------------------------ */
+
+.csp-tree-container {
+    position: relative;
+    width: 100%;
+    padding: 0.5rem 0 1rem;
+    overflow-x: auto;
+}
+
+
+/* ------------------------------------------------------------
+   ROOT NODE
+   ------------------------------------------------------------ */
+
+.csp-root {
+    width: max-content;
+    min-width: 130px;
+
+    margin: 0 auto;
+
+    padding: 0.6rem 1rem;
+
+    background: #e0f2fe;
+
+    border: 2px solid #0284c7;
+    border-radius: 8px;
+
+    color: #075985;
+
+    font-size: 0.82rem;
+    font-weight: 700;
+
+    text-align: center;
+
+    position: relative;
+    z-index: 2;
+}
+
+.root-icon {
+    margin-right: 0.35rem;
+}
+
+.root-vertical-line {
+    width: 2px;
+    height: 25px;
+
+    background: #94a3b8;
+
+    margin: 0 auto;
+}
+
+
+/* ------------------------------------------------------------
+   TREE RESET
+   ------------------------------------------------------------ */
+
+.csp-tree-root,
+.csp-tree-children {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+
+/* ------------------------------------------------------------
+   CHILDREN CONTAINER
+   ------------------------------------------------------------ */
+
+.csp-tree-root {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+
+    gap: 3rem;
+
+    position: relative;
+}
+
+
+/* Horizontal line connecting root branches */
+
+.csp-tree-root::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+
+    left: 10%;
+    right: 10%;
+
+    height: 2px;
+
+    background: #94a3b8;
+}
+
+
+/* ------------------------------------------------------------
+   TREE NODE
+   ------------------------------------------------------------ */
+
+.csp-tree-node {
+    position: relative;
+
+    padding-top: 25px;
+
+    min-width: 210px;
+}
+
+
+/* Vertical connector from parent */
+
+.csp-tree-node::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 50%;
+
+    width: 2px;
+    height: 25px;
+
+    background: #94a3b8;
+
+    transform: translateX(-50%);
+}
+
+
+/* ------------------------------------------------------------
+   NODE CARD
+   ------------------------------------------------------------ */
+
+.csp-node-card {
+
+    min-width: 210px;
+    max-width: 280px;
+
+    padding: 0.65rem 0.75rem;
+
+    border-radius: 8px;
+
+    background: white;
+
+    border: 1px solid #dbe3ed;
+
+    box-shadow: 0 2px 5px rgba(15, 23, 42, 0.06);
+
+    position: relative;
+
+    z-index: 2;
+}
+
+
+/* ------------------------------------------------------------
+   NODE HEADER
+   ------------------------------------------------------------ */
+
+.csp-node-header {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 0.4rem;
+
+    flex-wrap: wrap;
+}
+
+.csp-node-icon {
+
+    width: 22px;
+    height: 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    font-weight: 800;
+
+    font-size: 0.75rem;
+
+    flex-shrink: 0;
+}
+
+.csp-node-assignment {
+
+    font-family: Consolas, Monaco, monospace;
+
+    font-size: 0.78rem;
+
+    font-weight: 700;
+
+    color: #0f172a;
+}
+
+.csp-node-status {
+
+    font-size: 0.64rem;
+
+    font-weight: 800;
+
+    letter-spacing: 0.03em;
+
+    margin-left: auto;
+}
+
+
+/* ------------------------------------------------------------
+   NODE REASON
+   ------------------------------------------------------------ */
+
+.csp-node-reason {
+
+    margin-top: 0.45rem;
+
+    padding-top: 0.4rem;
+
+    border-top: 1px solid #e2e8f0;
+
+    font-size: 0.7rem;
+
+    line-height: 1.45;
+
+    color: #64748b;
+}
+
+
+/* ------------------------------------------------------------
+   EXPANDED NODE
+   ------------------------------------------------------------ */
+
+.tree-expanded {
+
+    border-color: #60a5fa;
+
+    background: #f8fbff;
+}
+
+.tree-expanded .csp-node-icon {
+
+    background: #dbeafe;
+
+    color: #2563eb;
+}
+
+.tree-expanded .csp-node-status {
+
+    color: #2563eb;
+}
+
+
+/* ------------------------------------------------------------
+   VALID NODE
+   ------------------------------------------------------------ */
+
+.tree-valid {
+
+    border-color: #34d399;
+
+    background: #f0fdf4;
+}
+
+.tree-valid .csp-node-icon {
+
+    background: #dcfce7;
+
+    color: #059669;
+}
+
+.tree-valid .csp-node-status {
+
+    color: #059669;
+}
+
+
+/* ------------------------------------------------------------
+   REJECTED NODE
+   ------------------------------------------------------------ */
+
+.tree-rejected {
+
+    border-color: #f87171;
+
+    background: #fff7f7;
+}
+
+.tree-rejected .csp-node-icon {
+
+    background: #fee2e2;
+
+    color: #dc2626;
+}
+
+.tree-rejected .csp-node-status {
+
+    color: #dc2626;
+}
+
+
+/* ------------------------------------------------------------
+   BACKTRACK LABEL
+   ------------------------------------------------------------ */
+
+.csp-backtrack-label {
+
+    margin-top: 0.45rem;
+
+    padding: 0.3rem 0.45rem;
+
+    background: #fff7ed;
+
+    border-left: 3px solid #f97316;
+
+    border-radius: 3px;
+
+    color: #c2410c;
+
+    font-size: 0.67rem;
+
+    font-weight: 800;
+}
+
+
+/* ------------------------------------------------------------
+   CHILD TREE
+   ------------------------------------------------------------ */
+
+.csp-tree-children {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: flex-start;
+
+    gap: 2rem;
+
+    margin-top: 25px;
+
+    position: relative;
+}
+
+
+/* Horizontal line connecting children */
+
+.csp-tree-children::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+
+    left: 15%;
+    right: 15%;
+
+    height: 2px;
+
+    background: #cbd5e1;
+}
+
+
+/* ------------------------------------------------------------
+   BEST ASSIGNMENT
+   ------------------------------------------------------------ */
+
+.best-assignment {
+
+    margin-top: 1rem;
+
+    padding: 0.7rem 0.8rem;
+
+    background: #eff6ff;
+
+    border: 1px solid #93c5fd;
+
+    border-radius: 7px;
+
+    font-size: 0.82rem;
+
+    color: #1e3a8a;
+}
+
+/* Responsive Fallback for Small Displays */
+@media (max-width: 860px), (max-height: 600px) {
+    html, body {
+        height: auto;
+        overflow: auto;
+    }
+
+    body {
+        padding: 1rem;
+    }
+
+    .window-container {
+        height: auto;
+    }
+
+    .main-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .right-column {
+        overflow-y: visible;
+    }
+}

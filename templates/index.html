@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Energy Optimization</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="window-container">
+
+        <!-- TOP BAR: Unified Header -->
+        <header class="app-header">
+            <div class="header-brand">
+                <h1>AI Energy Optimization</h1>
+                <span class="header-divider">|</span>
+                <p class="subtitle">Rule-Based Intelligent Agent Demonstration</p>
+            </div>
+            <div class="header-badge">Non-ML Expert System</div>
+        </header>
+
+        <!-- MAIN SPLIT WORKSPACE -->
+        <main class="main-layout">
+
+            <!-- LEFT COLUMN: ENVIRONMENT INPUT -->
+            <aside class="left-column">
+                <section class="card input-card">
+                    <div class="card-header">
+                        <h2>Environment Input</h2>
+                        <span class="panel-subtitle">Agent Sensory State</span>
+                    </div>
+
+                    <form id="ai-form">
+                        <div class="form-body">
+                            <div class="input-field">
+                                <label for="temperature">Temperature (°C)</label>
+                                <input type="number" id="temperature" value="32" step="1" required>
+                            </div>
+
+                            <div class="input-field">
+                                <label for="occupants">Occupants</label>
+                                <input type="number" id="occupants" value="3" min="0" required>
+                            </div>
+
+                            <div class="input-field">
+                                <label>AC Status</label>
+                                <div class="toggle-switch">
+                                    <label class="toggle-option">
+                                        <input type="radio" name="ac" value="true" checked>
+                                        <span>ON</span>
+                                    </label>
+                                    <label class="toggle-option">
+                                        <input type="radio" name="ac" value="false">
+                                        <span>OFF</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="input-field">
+                                <label>Lighting Status</label>
+                                <div class="toggle-switch">
+                                    <label class="toggle-option">
+                                        <input type="radio" name="lights" value="true" checked>
+                                        <span>ON</span>
+                                    </label>
+                                    <label class="toggle-option">
+                                        <input type="radio" name="lights" value="false">
+                                        <span>OFF</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="run-btn" class="btn-run">Run AI</button>
+                    </form>
+                </section>
+            </aside>
+
+            <!-- RIGHT COLUMN: AI REASONING FLOW -->
+            <section class="right-column">
+                <div class="reasoning-wrapper">
+                    <div class="reasoning-header">
+                        <h2>AI Reasoning Flow</h2>
+                        <span class="flow-indicator">Decision Pipeline</span>
+                    </div>
+
+                    <div class="flow-container">
+                        <!-- STAGE 1: PERCEPTION -->
+                        <div class="flow-card" id="card-perception">
+                            <div class="card-top">
+                                <span class="card-stage">Stage 1</span>
+                                <h3>PERCEPTION</h3>
+                            </div>
+                            <div class="flow-body" id="perception-content">
+                                <p class="placeholder-text">Awaiting input...</p>
+                            </div>
+                        </div>
+
+                        <div class="flow-arrow">↓</div>
+
+                        <!-- STAGE 2: RULE EVALUATION -->
+                        <div class="flow-card" id="card-rules">
+                            <div class="card-top">
+                                <span class="card-stage">Stage 2</span>
+                                <h3>RULE EVALUATION</h3>
+                            </div>
+                            <div class="flow-body" id="rules-content">
+                                <p class="placeholder-text">Awaiting input...</p>
+                            </div>
+                        </div>
+
+                        <div class="flow-arrow">↓</div>
+
+                        <!-- STAGE 3: CONSTRAINT CHECK -->
+                        <div class="flow-card" id="card-constraints">
+                            <div class="card-top">
+                                <span class="card-stage">Stage 3</span>
+                                <h3>CONSTRAINT CHECK</h3>
+                            </div>
+                            <div class="flow-body" id="constraints-content">
+                                <p class="placeholder-text">Awaiting input...</p>
+                            </div>
+                        </div>
+
+                        <div class="flow-arrow">↓</div>
+
+<!-- STAGE 4: CSP BACKTRACKING -->
+<div class="flow-card" id="card-csp">
+    <div class="card-top">
+        <span class="card-stage">Stage 4</span>
+        <h3>CSP SEARCH & BACKTRACKING</h3>
+    </div>
+
+    <div class="flow-body" id="csp-content">
+        <p class="placeholder-text">
+            Awaiting input...
+        </p>
+    </div>
+</div>
+
+<div class="flow-arrow">↓</div>
+
+<!-- STAGE 5: AI DECISION -->
+<div class="flow-card card-decision" id="card-decision">
+    <div class="card-top">
+        <span class="card-stage stage-decision">Stage 5</span>
+        <h3>AI DECISION</h3>
+    </div>
+
+    <div class="flow-body" id="decision-content">
+        <p class="placeholder-text">
+            Awaiting input...
+        </p>
+    </div>
+</div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
