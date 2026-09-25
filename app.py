@@ -26,8 +26,10 @@ def optimize():
     {
         "temperature": 32,
         "occupants": 3,
-        "ac": true,
-        "lights": true
+        "time_of_day": "14:00",
+        "ambient_light": 650,
+        "ac": "HIGH",
+        "lights": "ON"
     }
     Returns:
     {
@@ -35,6 +37,11 @@ def optimize():
         "observations": list,
         "rules_triggered": list,
         "constraints": list,
+        "csp": dict,
+        "hill_climbing": dict,
+        "estimated_energy": number,
+        "optimized_energy": number,
+        "energy": dict,
         "decision": str,
         "explanation": str
     }
@@ -44,13 +51,35 @@ def optimize():
     try:
         temperature = float(data.get("temperature", 32.0))
         occupants = max(0, int(data.get("occupants", 1)))
-        ac = bool(data.get("ac", True))
-        lights = bool(data.get("lights", True))
+        time_of_day = str(data.get("time_of_day", "14:00"))
+        ambient_light = float(data.get("ambient_light", 650.0))
+        ac = _parse_device_state(
+            data.get("ac", "HIGH"), {"OFF", "LOW", "HIGH"}, "HIGH"
+        )
+        lights = _parse_device_state(
+            data.get("lights", "ON"), {"OFF", "MEDIUM", "ON"}, "ON"
+        )
+        if not 0 <= ambient_light:
+            raise ValueError
+        from datetime import datetime
+        datetime.strptime(time_of_day, "%H:%M")
     except (ValueError, TypeError):
         return jsonify({"error": "Invalid input data types."}), 400
 
-    result = agent.evaluate(temperature, occupants, ac, lights)
+    result = agent.evaluate(
+        temperature, occupants, ac, lights, time_of_day, ambient_light
+    )
     return jsonify(result), 200
+
+
+def _parse_device_state(value, allowed_states, legacy_on_state):
+    if isinstance(value, bool):
+        legacy_state = legacy_on_state if value else "OFF"
+        if legacy_state in allowed_states:
+            return legacy_state
+    if isinstance(value, str) and value.upper() in allowed_states:
+        return value.upper()
+    raise ValueError
 
 
 if __name__ == "__main__":
