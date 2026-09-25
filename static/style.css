@@ -175,7 +175,7 @@ body {
 
 .toggle-switch {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
 gap: 1.5rem;
 }
 
@@ -409,6 +409,84 @@ gap: 1.5rem;
 }
 
 /* Decision Details */
+.hill-summary {
+    display: grid;
+    gap: 0.35rem;
+    margin-bottom: 0.75rem;
+}
+
+.hill-neighbours {
+    margin-bottom: 0.75rem;
+}
+
+.hill-step {
+    padding: 0.55rem 0.7rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    margin-top: 0.4rem;
+    border-left: 3px solid;
+}
+
+.hill-accepted {
+    background: #f0fdf4;
+    border-left-color: #10b981;
+    color: #065f46;
+}
+
+.hill-rejected {
+    background: #f8fafc;
+    border-left-color: #94a3b8;
+    color: #475569;
+}
+
+.hill-step-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.2rem;
+}
+
+.hill-step-state,
+.hill-step-reason {
+    font-family: Consolas, Monaco, monospace;
+    font-size: 0.75rem;
+}
+
+.hill-step-reason {
+    margin-top: 0.2rem;
+}
+
+.energy-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+}
+
+.energy-grid > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.55rem 0.7rem;
+    background: #f8fafc;
+    border: 1px solid #dbe3ed;
+    border-radius: 6px;
+    font-size: 0.82rem;
+}
+
+.energy-grid strong {
+    color: #0f172a;
+}
+
+.energy-grid .energy-reduction {
+    grid-column: 1 / -1;
+    background: #eff6ff;
+    border-color: #93c5fd;
+}
+
+.energy-reduction strong {
+    color: #1d4ed8;
+    font-size: 1.05rem;
+}
+
 .card-decision {
     background: #f0fdf4;
     border-color: #86efac;
@@ -557,6 +635,8 @@ gap: 1.5rem;
     align-items: flex-start;
 
     gap: 3rem;
+    width: max-content;
+    min-width: 100%;
 
     position: relative;
 }
@@ -589,7 +669,26 @@ gap: 1.5rem;
 
     padding-top: 25px;
 
-    min-width: 210px;
+    flex: 0 0 280px;
+    width: 280px;
+}
+
+.csp-branch-line {
+    position: relative;
+}
+
+.csp-child-connector {
+    width: 2px;
+    height: 25px;
+    margin: 0 auto;
+    background: #94a3b8;
+}
+
+/* Reserve space for the three-state child branches so sibling subtrees
+   cannot overlap them. */
+.csp-tree-root > .csp-tree-node:has(> .csp-tree-children) {
+    flex-basis: 920px;
+    width: 920px;
 }
 
 
@@ -618,7 +717,8 @@ gap: 1.5rem;
 
 .csp-node-card {
 
-    min-width: 210px;
+    width: 280px;
+    min-width: 280px;
     max-width: 280px;
 
     padding: 0.65rem 0.75rem;
@@ -822,13 +922,15 @@ gap: 1.5rem;
     align-items: flex-start;
 
     gap: 2rem;
+    width: max-content;
+    min-width: 100%;
 
     margin-top: 25px;
 
     position: relative;
 }
 
-
+/* Connect a parent assignment card to the child-branch line. */
 /* Horizontal line connecting children */
 
 .csp-tree-children::before {

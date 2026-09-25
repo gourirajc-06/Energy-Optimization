@@ -44,14 +44,28 @@
                             </div>
 
                             <div class="input-field">
+                                <label for="time-of-day">Time of Day</label>
+                                <input type="time" id="time-of-day" value="14:00" required>
+                            </div>
+
+                            <div class="input-field">
+                                <label for="ambient-light">Ambient Light (lux)</label>
+                                <input type="number" id="ambient-light" value="650" min="0" step="1" required>
+                            </div>
+
+                            <div class="input-field">
                                 <label>AC Status</label>
                                 <div class="toggle-switch">
                                     <label class="toggle-option">
-                                        <input type="radio" name="ac" value="true" checked>
-                                        <span>ON</span>
+                                        <input type="radio" name="ac" value="HIGH" checked>
+                                        <span>HIGH</span>
                                     </label>
                                     <label class="toggle-option">
-                                        <input type="radio" name="ac" value="false">
+                                        <input type="radio" name="ac" value="LOW">
+                                        <span>LOW</span>
+                                    </label>
+                                    <label class="toggle-option">
+                                        <input type="radio" name="ac" value="OFF">
                                         <span>OFF</span>
                                     </label>
                                 </div>
@@ -61,11 +75,15 @@
                                 <label>Lighting Status</label>
                                 <div class="toggle-switch">
                                     <label class="toggle-option">
-                                        <input type="radio" name="lights" value="true" checked>
+                                        <input type="radio" name="lights" value="ON" checked>
                                         <span>ON</span>
                                     </label>
                                     <label class="toggle-option">
-                                        <input type="radio" name="lights" value="false">
+                                        <input type="radio" name="lights" value="MEDIUM">
+                                        <span>MEDIUM</span>
+                                    </label>
+                                    <label class="toggle-option">
+                                        <input type="radio" name="lights" value="OFF">
                                         <span>OFF</span>
                                     </label>
                                 </div>
@@ -141,17 +159,43 @@
 
 <div class="flow-arrow">↓</div>
 
-<!-- STAGE 5: AI DECISION -->
-<div class="flow-card card-decision" id="card-decision">
+<!-- STAGE 5: SIMPLE HILL CLIMBING -->
+<div class="flow-card" id="card-hill-climbing">
     <div class="card-top">
-        <span class="card-stage stage-decision">Stage 5</span>
-        <h3>AI DECISION</h3>
+        <span class="card-stage">Stage 5</span>
+        <h3>SIMPLE HILL CLIMBING</h3>
     </div>
 
-    <div class="flow-body" id="decision-content">
+    <div class="flow-body" id="hill-climbing-content">
         <p class="placeholder-text">
             Awaiting input...
         </p>
+    </div>
+</div>
+
+<div class="flow-arrow">↓</div>
+
+<!-- ENERGY COMPARISON -->
+<div class="flow-card" id="card-energy">
+    <div class="card-top">
+        <span class="card-stage">Energy</span>
+        <h3>ENERGY OPTIMISATION</h3>
+    </div>
+    <div class="flow-body" id="energy-content">
+        <p class="placeholder-text">Awaiting input...</p>
+    </div>
+</div>
+
+<div class="flow-arrow">↓</div>
+
+<!-- FINAL AI DECISION -->
+<div class="flow-card card-decision" id="card-decision">
+    <div class="card-top">
+        <span class="card-stage stage-decision">Final</span>
+        <h3>AI DECISION</h3>
+    </div>
+    <div class="flow-body" id="decision-content">
+        <p class="placeholder-text">Awaiting input...</p>
     </div>
 </div>
                     </div>

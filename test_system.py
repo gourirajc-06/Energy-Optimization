@@ -1,133 +1,162 @@
-"""
-test_system.py
-==============
-Automated tests for the simplified AI Energy Optimization project:
-1. GET / (Homepage rendering and presence of required sections)
-2. Scenario 1 (Hot Day / Comfort Constraint / Lights Reduced)
-3. Scenario 2 (Vacant Room / Shutdown)
-4. Scenario 3 (Cool Temperature / AC turned OFF)
-5. Decision differentiation across different inputs
-"""
+"""Regression and pipeline tests for the AI Energy Optimization project."""
 
-import json
-from app import app
+from app import agent, app
+
 
 client = app.test_client()
 
 
+def optimize(payload):
+    response = client.post("/api/optimize", json=payload)
+    assert response.status_code == 200
+    return response.get_json()
+
+
+def assert_valid(result, temperature, occupants, time_of_day, ambient_light):
+    valid, reason = agent.check_constraints(
+        result["hill_climbing"]["final_state"],
+        temperature,
+        occupants,
+        time_of_day,
+        ambient_light,
+    )
+    assert valid, reason
+
+
 def test_homepage():
-    print("Testing GET / ...")
-    res = client.get("/")
-    assert res.status_code == 200
-    html = res.data.decode("utf-8")
-    assert "AI Energy Optimization" in html
-    assert "Environment Input" in html
-    assert "AI Reasoning Flow" in html
-    assert "PERCEPTION" in html
-    assert "RULE EVALUATION" in html
-    assert "CONSTRAINT CHECK" in html
-    assert "AI DECISION" in html
-    assert "AI Concepts Demonstrated" not in html
-    print("[PASS] Homepage contains all required visualizer sections.")
+    html = client.get("/").data.decode("utf-8")
+    for marker in (
+        "AI Energy Optimization", "PERCEPTION", "RULE EVALUATION",
+        "CONSTRAINT CHECK", "CSP SEARCH & BACKTRACKING",
+        "SIMPLE HILL CLIMBING", "ENERGY OPTIMISATION", "AI DECISION",
+        "Time of Day", "Ambient Light (lux)"
+    ):
+        assert marker in html
 
 
-def test_scenario_1_hot():
-    print("\nTesting Scenario 1: Temperature = 32C, Occupants = 3, AC = ON, Lights = ON...")
-    payload = {
-        "temperature": 32.0,
-        "occupants": 3,
-        "ac": True,
-        "lights": True
-    }
-    res = client.post("/api/optimize", data=json.dumps(payload), content_type="application/json")
-    assert res.status_code == 200
-    data = res.get_json()
-
-    print(f"  Perception: {data['state']}")
-    print(f"  Rules: {data['rules_triggered']}")
-    print(f"  Constraints: {data['constraints']}")
-    print(f"  Decision: {data['decision']}")
-    print(f"  Explanation: {data['explanation']}")
-
-    # Verify rule 1 fired
-    assert any("RULE 1" in r for r in data["rules_triggered"])
-    # Verify turning OFF AC is REJECTED
-    assert any("Turning OFF AC -> REJECTED" in c for c in data["constraints"])
-    # Verify decision
-    assert "unnecessary lighting" in data["decision"]
-    print("[PASS] Scenario 1 verified: AC cooling preserved, lights reduced.")
+def test_scenario_1_hot_day_bright():
+    result = optimize({
+        "temperature": 32, "occupants": 3, "time_of_day": "14:00",
+        "ambient_light": 650, "ac": "HIGH", "lights": "ON"
+    })
+    perception = result["perception"]
+    assert perception["occupied"]
+    assert perception["temperature_above_comfort"]
+    assert perception["daylight_period"]
+    assert perception["ambient_light_sufficient"]
+    assert result["hill_climbing"]["final_state"] == {"AC": "HIGH", "Lights": "OFF"}
+    assert_valid(result, 32, 3, "14:00", 650)
 
 
 def test_scenario_2_vacant():
-    print("\nTesting Scenario 2: Temperature = 28C, Occupants = 0, AC = ON, Lights = ON...")
-    payload = {
-        "temperature": 28.0,
-        "occupants": 0,
-        "ac": True,
-        "lights": True
+    result = optimize({
+        "temperature": 23, "occupants": 0, "time_of_day": "14:00",
+        "ambient_light": 700, "ac": "HIGH", "lights": "ON"
+    })
+    assert result["perception"]["vacant"]
+    assert result["hill_climbing"]["final_state"] == {"AC": "OFF", "Lights": "OFF"}
+    assert_valid(result, 23, 0, "14:00", 700)
+
+
+def test_scenario_3_cool_night_dark():
+    result = optimize({
+        "temperature": 23, "occupants": 2, "time_of_day": "22:00",
+        "ambient_light": 20, "ac": "HIGH", "lights": "ON"
+    })
+    perception = result["perception"]
+    assert perception["occupied"]
+    assert perception["temperature_within_comfort"]
+    assert perception["night_period"]
+    assert perception["ambient_light_insufficient"]
+    assert result["hill_climbing"]["final_state"] == {"AC": "OFF", "Lights": "ON"}
+    assert_valid(result, 23, 2, "22:00", 20)
+
+
+def test_scenario_4_hot_night_dark():
+    result = optimize({
+        "temperature": 32, "occupants": 3, "time_of_day": "22:00",
+        "ambient_light": 10, "ac": "HIGH", "lights": "ON"
+    })
+    assert result["hill_climbing"]["final_state"] == {"AC": "HIGH", "Lights": "ON"}
+    assert_valid(result, 32, 3, "22:00", 10)
+
+
+def test_moderate_temperature_and_ambient_light_use_reduced_states():
+    result = optimize({
+        "temperature": 26, "occupants": 3, "time_of_day": "14:00",
+        "ambient_light": 400, "ac": "HIGH", "lights": "ON"
+    })
+    assert result["perception"]["moderate_temperature"]
+    assert result["hill_climbing"]["final_state"] == {
+        "AC": "LOW", "Lights": "MEDIUM"
     }
-    res = client.post("/api/optimize", data=json.dumps(payload), content_type="application/json")
-    assert res.status_code == 200
-    data = res.get_json()
-
-    print(f"  Rules: {data['rules_triggered']}")
-    print(f"  Constraints: {data['constraints']}")
-    print(f"  Decision: {data['decision']}")
-
-    # Verify rule 2 fired
-    assert any("RULE 2" in r for r in data["rules_triggered"])
-    # Verify both allowed
-    assert any("Turning OFF AC -> ALLOWED" in c for c in data["constraints"])
-    assert any("Turning OFF lights -> ALLOWED" in c for c in data["constraints"])
-    assert "Turn OFF both AC and Lights" in data["decision"]
-    print("[PASS] Scenario 2 verified: Vacant room shuts down all appliances.")
+    assert_valid(result, 26, 3, "14:00", 400)
 
 
-def test_scenario_3_cool():
-    print("\nTesting Scenario 3: Temperature = 21C, Occupants = 2, AC = ON, Lights = ON...")
-    payload = {
-        "temperature": 21.0,
-        "occupants": 2,
-        "ac": True,
-        "lights": True
-    }
-    res = client.post("/api/optimize", data=json.dumps(payload), content_type="application/json")
-    assert res.status_code == 200
-    data = res.get_json()
-
-    print(f"  Rules: {data['rules_triggered']}")
-    print(f"  Constraints: {data['constraints']}")
-    print(f"  Decision: {data['decision']}")
-
-    # Verify rule 3 fired
-    assert any("RULE 3" in r for r in data["rules_triggered"])
-    assert any("Turning OFF AC -> ALLOWED" in c for c in data["constraints"])
-    assert any("Turning OFF lights -> REJECTED" in c for c in data["constraints"])
-    assert "Turn OFF AC and keep room lighting active" in data["decision"]
-    print("[PASS] Scenario 3 verified: Cool room turns off AC, preserves occupant lighting.")
+def test_required_output_state_cases():
+    cases = [
+        (23, 3, "14:00", 700, {"AC": "OFF", "Lights": "OFF"}),
+        (26, 3, "14:00", 700, {"AC": "LOW", "Lights": "OFF"}),
+        (32, 3, "14:00", 700, {"AC": "HIGH", "Lights": "OFF"}),
+        (23, 3, "14:00", 400, {"AC": "OFF", "Lights": "MEDIUM"}),
+        (23, 3, "22:00", 50, {"AC": "OFF", "Lights": "ON"}),
+        (32, 0, "14:00", 50, {"AC": "OFF", "Lights": "OFF"}),
+    ]
+    for temperature, occupants, time_of_day, ambient_light, expected in cases:
+        result = optimize({
+            "temperature": temperature,
+            "occupants": occupants,
+            "time_of_day": time_of_day,
+            "ambient_light": ambient_light,
+            "ac": "HIGH",
+            "lights": "ON",
+        })
+        assert result["hill_climbing"]["final_state"] == expected
+        assert_valid(result, temperature, occupants, time_of_day, ambient_light)
 
 
-def test_differentiation():
-    print("\nTesting Decision Differentiation...")
-    r1 = client.post("/api/optimize", data=json.dumps({"temperature": 32, "occupants": 3, "ac": True, "lights": True}), content_type="application/json").get_json()
-    r2 = client.post("/api/optimize", data=json.dumps({"temperature": 28, "occupants": 0, "ac": True, "lights": True}), content_type="application/json").get_json()
-    r3 = client.post("/api/optimize", data=json.dumps({"temperature": 21, "occupants": 2, "ac": True, "lights": True}), content_type="application/json").get_json()
+def test_hill_climbing_trace_and_energy():
+    result = optimize({
+        "temperature": 32, "occupants": 3, "time_of_day": "14:00",
+        "ambient_light": 650, "ac": "HIGH", "lights": "ON"
+    })
+    hill = result["hill_climbing"]
+    assert hill["steps"]
+    assert hill["iterations"] == 1
+    assert hill["initial_state"] == result["csp"]["best_assignment"]
+    assert hill["final_energy"] == result["optimized_energy"]
+    assert result["energy_saved"] == result["estimated_energy"] - result["optimized_energy"]
+    assert result["energy_reduction_percent"] == 16.67
+    assert result["optimized_energy"] <= result["estimated_energy"]
+    assert agent.energy_cost({"AC": "LOW", "Lights": "OFF"}) == 3
+    assert agent.energy_cost({"AC": "OFF", "Lights": "MEDIUM"}) == 0.5
 
-    assert r1["decision"] != r2["decision"]
-    assert r2["decision"] != r3["decision"]
-    assert r1["decision"] != r3["decision"]
-    print("[PASS] All scenarios produce distinct, rational decisions.")
+
+def test_api_structure_and_zero_energy():
+    result = optimize({
+        "temperature": 23, "occupants": 0, "time_of_day": "14:00",
+        "ambient_light": 700, "ac": "OFF", "lights": "OFF"
+    })
+    assert result["estimated_energy"] == 0
+    assert result["energy_saved"] == 0
+    assert result["energy_reduction_percent"] == 0.0
+    assert result["csp"]["tree"]
+    assert result["csp"]["search_tree"] == result["csp"]["tree"]
+    assert result["energy"]["optimized"] == result["optimized_energy"]
+
+
+def test_invalid_time_and_light_are_rejected():
+    assert client.post("/api/optimize", json={"time_of_day": "25:00"}).status_code == 400
+    assert client.post("/api/optimize", json={"ambient_light": -1}).status_code == 400
 
 
 if __name__ == "__main__":
-    print("==================================================")
-    print("TESTING SIMPLIFIED AI ENERGY OPTIMIZATION")
-    print("==================================================")
     test_homepage()
-    test_scenario_1_hot()
+    test_scenario_1_hot_day_bright()
     test_scenario_2_vacant()
-    test_scenario_3_cool()
-    test_differentiation()
-    print("\n==================================================")
+    test_scenario_3_cool_night_dark()
+    test_scenario_4_hot_night_dark()
+    test_hill_climbing_trace_and_energy()
+    test_api_structure_and_zero_energy()
+    test_invalid_time_and_light_are_rejected()
     print("ALL TESTS PASSED SUCCESSFULLY!")
-    print("==================================================")

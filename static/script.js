@@ -18,12 +18,16 @@ document.addEventListener("DOMContentLoaded", () => {
     async function runAI() {
         const temperature = parseFloat(document.getElementById("temperature").value);
         const occupants = parseInt(document.getElementById("occupants").value, 10);
-        const ac = document.querySelector('input[name="ac"]:checked').value === "true";
-        const lights = document.querySelector('input[name="lights"]:checked').value === "true";
+        const timeOfDay = document.getElementById("time-of-day").value;
+        const ambientLight = parseFloat(document.getElementById("ambient-light").value);
+        const ac = document.querySelector('input[name="ac"]:checked').value;
+        const lights = document.querySelector('input[name="lights"]:checked').value;
 
         const payload = {
             temperature: temperature,
             occupants: occupants,
+            time_of_day: timeOfDay,
+            ambient_light: ambientLight,
             ac: ac,
             lights: lights
         };
@@ -65,12 +69,20 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="state-pill-group">
                 <span class="state-pill">Temperature: ${inputState.temperature}°C</span>
                 <span class="state-pill">Occupants: ${inputState.occupants}</span>
-                <span class="state-pill">AC: ${inputState.ac ? 'ON' : 'OFF'}</span>
-                <span class="state-pill">Lights: ${inputState.lights ? 'ON' : 'OFF'}</span>
+                <span class="state-pill">Time: ${inputState.time_of_day}</span>
+                <span class="state-pill">Ambient Light: ${inputState.ambient_light} lux</span>
+                <span class="state-pill">AC: ${inputState.ac}</span>
+                <span class="state-pill">Lights: ${inputState.lights}</span>
             </div>
             <ul class="observations-list">
                 ${data.observations.map(obs => `<li>${obs}</li>`).join('')}
             </ul>
+            <div class="perception-facts">
+                ${Object.entries(data.perception || {})
+                    .filter(([key]) => !["temperature", "occupants", "time_of_day", "ambient_light"].includes(key))
+                    .map(([key, value]) => `<span class="state-pill">${key.replaceAll("_", " ")}: ${value}</span>`)
+                    .join("")}
+            </div>
         `;
 
         // -------------------------------------------------------------
@@ -178,6 +190,10 @@ if (data.csp) {
                 .map(([key, value]) => `${key} = ${value}`)
                 .join(", ");
 
+        const childConnector = node.children && node.children.length > 0
+            ? `<div class="csp-child-connector" aria-hidden="true"></div>`
+            : "";
+
         let html = `
             <li class="csp-tree-node">
 
@@ -218,6 +234,7 @@ if (data.csp) {
                     </div>
 
                 </div>
+                ${childConnector}
         `;
 
         // Render children recursively
@@ -259,8 +276,8 @@ if (data.csp) {
 
             <div class="csp-info">
                 <strong>Domains:</strong>
-                AC = {ON, OFF},
-                Lights = {ON, OFF}
+                AC = {OFF, LOW, HIGH},
+                Lights = {OFF, MEDIUM, ON}
             </div>
 
             <div class="csp-info">
@@ -334,7 +351,74 @@ else {
 
 
 // -------------------------------------------------------------
-// CARD 5: AI DECISION
+// CARD 5: SIMPLE HILL CLIMBING
+// -------------------------------------------------------------
+
+const hillClimbingContainer =
+    document.getElementById("hill-climbing-content");
+const hillClimbing = data.hill_climbing;
+
+if (hillClimbing) {
+    const steps = hillClimbing.steps.map((step, index) => `
+        <div class="hill-step ${step.accepted ? "hill-accepted" : "hill-rejected"}">
+            <div class="hill-step-header">
+                <strong>Neighbour ${index + 1}</strong>
+                <span>${step.accepted ? "ACCEPTED" : "REJECTED"}</span>
+            </div>
+            <div class="hill-step-state">
+                Current: AC = ${step.current_state.AC}, Lights = ${step.current_state.Lights}
+                → Candidate: AC = ${step.candidate_state.AC}, Lights = ${step.candidate_state.Lights}
+            </div>
+            <div>Candidate energy: ${step.candidate_energy} units</div>
+            <div>Valid: ${step.valid ? "Yes" : "No"}</div>
+            <div class="hill-step-reason">${step.reason}</div>
+        </div>
+    `).join("");
+
+    hillClimbingContainer.innerHTML = `
+        <div class="hill-summary">
+            <div><strong>Initial configuration:</strong>
+                AC = ${hillClimbing.initial_state.AC},
+                Lights = ${hillClimbing.initial_state.Lights}
+            </div>
+            <div><strong>Initial energy:</strong> ${hillClimbing.initial_energy} units</div>
+        </div>
+        <div class="hill-neighbours">
+            <strong>Neighbours considered:</strong>
+            ${steps || '<p class="placeholder-text">No neighbours evaluated.</p>'}
+        </div>
+        <div class="hill-summary">
+            <div><strong>Final configuration:</strong>
+                AC = ${hillClimbing.final_state.AC},
+                Lights = ${hillClimbing.final_state.Lights}
+            </div>
+            <div><strong>Final energy:</strong> ${hillClimbing.final_energy} units</div>
+            <div><strong>Iterations:</strong> ${hillClimbing.iterations}</div>
+            <div><strong>Termination:</strong> ${hillClimbing.termination_reason || hillClimbing.reason}</div>
+        </div>
+    `;
+} else {
+    hillClimbingContainer.innerHTML =
+        '<p class="placeholder-text">Hill Climbing data unavailable.</p>';
+}
+
+// -------------------------------------------------------------
+// ENERGY COMPARISON
+// -------------------------------------------------------------
+
+const energyContainer = document.getElementById("energy-content");
+energyContainer.innerHTML = `
+    <div class="energy-grid">
+        <div><span>Estimated Energy</span><strong>${data.estimated_energy} units</strong></div>
+        <div><span>CSP Energy</span><strong>${data.csp_energy} units</strong></div>
+        <div><span>Optimised Energy</span><strong>${data.optimized_energy} units</strong></div>
+        <div><span>Energy Saved</span><strong>${data.energy_saved} units</strong></div>
+        <div class="energy-reduction"><span>Reduction</span><strong>${data.energy_reduction_percent}%</strong></div>
+    </div>
+`;
+
+// -------------------------------------------------------------
+// FINAL AI DECISION
 // -------------------------------------------------------------
 
 const decisionContainer =
